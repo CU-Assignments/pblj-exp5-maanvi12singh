@@ -1,0 +1,53 @@
+import java.util.List;
+import java.util.ArrayList;
+
+public class AutoboxingUnboxingExample {
+
+    // Method to calculate sum using autoboxing and unboxing
+    public static int calculateSum(List<Integer> numbers) {
+        int sum = 0;
+        // Autoboxing: Integer to int
+        for (Integer number : numbers) {
+            // Unboxing: Integer to int
+            sum += number;
+        }
+        return sum;
+    }
+
+    // Method to parse strings into Integer objects
+    public static Integer parseStringToInteger(String str) {
+        try {
+            // Using Integer.parseInt() to convert string to primitive int, then autobox to Integer
+            return Integer.valueOf(str);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input: " + str);
+            return null; // Returning null if parsing fails
+        }
+    }
+
+    public static void main(String[] args) {
+        // Creating a list of strings that we will convert to Integer
+        List<String> stringNumbers = new ArrayList<>();
+        stringNumbers.add("10");
+        stringNumbers.add("20");
+        stringNumbers.add("30");
+        stringNumbers.add("40");
+
+        // Creating a list of Integer objects
+        List<Integer> integers = new ArrayList<>();
+
+        // Parse each string to Integer and add to the integers list
+        for (String str : stringNumbers) {
+            Integer number = parseStringToInteger(str);
+            if (number != null) {
+                integers.add(number);
+            }
+        }
+
+        // Calculate the sum of the integers list
+        int sum = calculateSum(integers);
+
+        // Output the sum
+        System.out.println("The sum of the integers is: " + sum);
+    }
+}
