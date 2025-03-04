@@ -1,0 +1,167 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class EmployeeManagementApp {
+
+    // Employee class
+    static class Employee implements Serializable {
+        private static final long serialVersionUID = 1L;  // Serial version UID for version control
+
+        private String name;
+        private int id;
+        private String designation;
+        private double salary;
+
+        // Constructor
+        public Employee(String name, int id, String designation, double salary) {
+            this.name = name;
+            this.id = id;
+            this.designation = designation;
+            this.salary = salary;
+        }
+
+        // Getters and Setters
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getDesignation() {
+            return designation;
+        }
+
+        public void setDesignation(String designation) {
+            this.designation = designation;
+        }
+
+        public double getSalary() {
+            return salary;
+        }
+
+        public void setSalary(double salary) {
+            this.salary = salary;
+        }
+
+        @Override
+        public String toString() {
+            return "Employee [ID=" + id + ", Name=" + name + ", Designation=" + designation + ", Salary=" + salary + "]";
+        }
+    }
+
+    private static final String FILE_NAME = "employees.ser";
+    
+    // Method to add an employee to the file
+    public static void addEmployee(List<Employee> employeeList) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter Employee Name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter Employee ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline
+
+        System.out.print("Enter Employee Designation: ");
+        String designation = scanner.nextLine();
+
+        System.out.print("Enter Employee Salary: ");
+        double salary = scanner.nextDouble();
+        
+        // Create a new Employee object
+        Employee employee = new Employee(name, id, designation, salary);
+        
+        // Add the new employee to the list
+        employeeList.add(employee);
+
+        // Write the updated list of employees to the file
+        saveEmployeesToFile(employeeList);
+
+        System.out.println("Employee added successfully!");
+    }
+
+    // Method to display all employees from the file
+    public static void displayAllEmployees(List<Employee> employeeList) {
+        if (employeeList.isEmpty()) {
+            System.out.println("No employees to display.");
+        } else {
+            System.out.println("\nList of Employees:");
+            for (Employee employee : employeeList) {
+                System.out.println(employee);
+            }
+        }
+    }
+
+    // Method to save the list of employees to a file
+    public static void saveEmployeesToFile(List<Employee> employeeList) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            out.writeObject(employeeList);
+        } catch (IOException e) {
+            System.err.println("Error saving employees to file: " + e.getMessage());
+        }
+    }
+
+    // Method to load employees from the file
+    @SuppressWarnings("unchecked")
+    public static List<Employee> loadEmployeesFromFile() {
+        List<Employee> employeeList = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+            employeeList = (List<Employee>) in.readObject();
+        } catch (FileNotFoundException e) {
+            // If the file doesn't exist, return an empty list
+            System.out.println("No employee data found.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error loading employees from file: " + e.getMessage());
+        }
+
+        return employeeList;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Load employees from the file (if any)
+        List<Employee> employeeList = loadEmployeesFromFile();
+
+        while (true) {
+            // Display menu
+            System.out.println("\n--- Employee Management ---");
+            System.out.println("1. Add an Employee");
+            System.out.println("2. Display All Employees");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
+
+            switch (choice) {
+                case 1:
+                    addEmployee(employeeList);
+                    break;
+
+                case 2:
+                    displayAllEmployees(employeeList);
+                    break;
+
+                case 3:
+                    System.out.println("Exiting the application.");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice, please try again.");
+            }
+        }
+    }
+}
